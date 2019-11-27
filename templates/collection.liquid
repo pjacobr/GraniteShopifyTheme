@@ -1,0 +1,16 @@
+{% comment %}
+  The contents of the collection.liquid template can be found in /sections/collection-template.liquid
+{% endcomment %}
+{% unless customer %}
+  {% if template contains 'customers' %}
+      {% assign send_to_login = false %}
+  {% else %}
+      {% assign send_to_login = true %}
+  {% endif %}
+{% endunless %}
+
+{% if send_to_login and request.path != "/challenge" %}
+<meta content="0; url=/account/login?checkout_url=/" http-equiv="refresh" />
+{% else %}
+  {% section 'collection-template' %}
+{% endif %}
