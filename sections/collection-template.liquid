@@ -149,9 +149,18 @@
             <th>{{ fieldName }}</th>
           {% endfor %}
         </tr>
+        <tr>
         {% for product in collection.products %}
-
+          {% assign product_fields = product.description | split: '<br>' %}
+          <!-- {% for field in product.metafields.global %} -->
+            <td>{{ product.metafields.global["Color"] }}</td>
+            <td>{{ product.metafields.global["Type"] }}</td>
+            <td>{{ product.size }}</td>
+            <td>{{ product.description }}</td>
+            <td><script>console.log({{product | json}});</script></td>
+          <!-- {% endfor %} -->
         {% endfor %}
+        </tr>
       </table>
     </div>
   </div>

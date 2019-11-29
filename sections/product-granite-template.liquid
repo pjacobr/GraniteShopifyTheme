@@ -234,7 +234,11 @@
         >{{ 'products.product.loader_label' | t }}</p>
 
         <div class="product-single__description rte">
-          {{ product.description }}
+            <ul>
+              {% for field in product.metafields.global %}
+              <li>{{field | first}}: {{field | last}}</li>
+              {% endfor %}
+            </ul>
         </div>
 
         {% if section.settings.show_share_buttons %}
