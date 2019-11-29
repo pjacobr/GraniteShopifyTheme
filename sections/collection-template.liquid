@@ -149,16 +149,20 @@
             <th>{{ fieldName }}</th>
           {% endfor %}
         </tr>
-        <tr>
         {% for product in collection.products %}
           {% assign product_fields = product.description | split: '<br>' %}
-          <!-- {% for field in product.metafields.global %} -->
+          {% capture productSize %}{{product.metafields.global["Length"]}}x{{product.metafields.global["Width"]}}x{{product.metafields.global["Height"]}}{% endcapture %}
+          <tr>
             <td>{{ product.metafields.global["Color"] }}</td>
             <td>{{ product.metafields.global["Type"] }}</td>
-            <td>{{ product.size }}</td>
+            <td>{{ productSize }}</td>
             <td>{{ product.description }}</td>
-            <td><script>console.log({{product | json}});</script></td>
-          <!-- {% endfor %} -->
+            <td>{{ product.featured_image | img_url: '100x100' | img_tag }}</td>
+            <td>{{ product.price | money}}</td>
+            <td>{{ product.first_available_variant.inventory_quantity }}</td>
+            <td>{{ product.first_available_variant.weight | weight_with_unit: variant.weight_unit }}</td>
+            <td style="width: 100px"><button>Add to Cart</button></td>
+          </tr>
         {% endfor %}
         </tr>
       </table>
