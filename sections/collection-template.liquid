@@ -164,11 +164,11 @@
            
             <td style="width: 100px>
               <form action="/cart/add" method="post" id="product-form- {{ product.id }}">
-                <input type="hidden" name="id" value="{{ product.variants.first.id }}">.
+                <input type="hidden" name="id" value="{{ product.variants.first.id }}">
                   <div>
-                     <button type="submit" name="add" class="btn-addtocart">Add to cart</button>
+                    <button type="submit" name="add" class="btn-addtocart">Add to cart</button>
                   </div>
-             </form>
+              </form>
             </td>
           </tr>
         {% endfor %}
