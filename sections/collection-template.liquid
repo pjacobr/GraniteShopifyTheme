@@ -161,7 +161,7 @@
             <td>{{ product.price | money}}</td>
             <td>{{ product.first_available_variant.inventory_quantity }}</td>
             <td>{{ product.first_available_variant.weight | weight_with_unit: variant.weight_unit }}</td>
-            <td style="width: 100px"><button>Add to Cart</button></td>
+            <td style="width: 100px"><button  class="btn_addtocart">Add to Cart</button></td>
           </tr>
         {% endfor %}
         </tr>
