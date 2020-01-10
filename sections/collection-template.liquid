@@ -162,15 +162,15 @@
             <td>{{ product.first_available_variant.inventory_quantity }}</td>
             <td>{{ product.first_available_variant.weight | weight_with_unit: variant.weight_unit }}</td>
            
-            <td style="width: 100px>
-              <form action="/cart/add" method="post" id="product-form- {{ product.id }}">
-                <input type="hidden" name="id" value="{{ product.variants.first.id }}">
-                  <div>
-                    <button type="submit" name="add" class="btn-addtocart">Add to cart</button>
-                  </div>
-              </form>
-            </td>
-          </tr>
+            <td style="width: 100px">
+             <form action="/cart/add" method="post" id="product-form- {{ product.id }}">
+              <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+                <div>
+                  <button type="submit" name="add" class="btn-addtocart">Add to cart</button>
+                </div>
+            </form>
+          </td>
+         </tr>
         {% endfor %}
         </tr>
       </table>
