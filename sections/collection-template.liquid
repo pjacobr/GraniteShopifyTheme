@@ -142,7 +142,7 @@
 
   <div class="page-width" id="Collection">
     {% assign fieldNames = "Color, Type, Size, Description, Photo, Price, In Inv, Weight, Add to Cart" | split: ',' %}
-    <div class="header">
+    <div class="header" style="overflow-x:auto;">
       <table cellspacing="0">
         <tr>
           {% for fieldName in fieldNames %}
