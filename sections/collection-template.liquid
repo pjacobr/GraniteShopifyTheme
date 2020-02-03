@@ -153,7 +153,7 @@
           {% assign product_fields = product.description | split: '<br>' %}
           {% capture productSize %}{{product.metafields.global["Length"]}}x{{product.metafields.global["Width"]}}x{{product.metafields.global["Height"]}}{% endcapture %}
           <script type="text/javascript">
-          console.log({{customers | json}});
+          console.log(Shopfy.shop);
           console.log("*************************");
           //console.log({{ product | json }}); 
           //console.log(Shopify);
