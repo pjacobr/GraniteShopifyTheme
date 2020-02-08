@@ -140,6 +140,13 @@
       </div> -->
   </header>
   <!-- inventory view  -->
+  {% if customer %}
+    Customer is logged in. You can access the customer
+    attributes such as {{ customer.first_name }} {{ customer.last_name}} who lives in 
+    {% for address in customer.addresses %}
+      {{ address.country }}  {{ address.city }}
+    {% endfor %} .
+  {% endif %}
   <div class="page-width" id="Collection">
     {% assign fieldNames = "Color, Type, Size, Description, Photo, Price, In Inv, Weight, Add to Cart" | split: ',' %}
     <div class="header" style="overflow-x:auto;">
@@ -153,10 +160,9 @@
           {% assign product_fields = product.description | split: '<br>' %}
           {% capture productSize %}{{product.metafields.global["Length"]}}x{{product.metafields.global["Width"]}}x{{product.metafields.global["Height"]}}{% endcapture %}
           <script type="text/javascript">
-          console.log(Shopfy);
-          console.log("*************************");
-          //console.log({{ product | json }}); 
-          //console.log(Shopify);
+            // console.log(Shopify);
+            // console.log("************AAAAA*************");
+            //console.log(Shopify);
           </script>
           <tr>
             <td>{{ product.metafields.global["Color"] }}</td>
