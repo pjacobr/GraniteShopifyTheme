@@ -5,8 +5,7 @@
         <h1 class="text-center">{{ "customer.register.title" | t }}</h1>
 
         {%- assign formId = 'create_customer' -%} {% form 'create_customer', id:
-        formId, novalidate: 'novalidate' %} {% render 'form-status', form: form,
-        form_id: formId %}
+        formId %} {% render 'form-status', form: form, form_id: formId %}
 
         <label for="{{ formId }}-FirstName">{{
           "customer.register.first_name" | t
@@ -188,9 +187,10 @@
 
         <p class="text-center">
           <input
-            type="submit"
+            type="button"
             value="{{ 'customer.register.submit' | t }}"
             class="btn"
+            onclick="validateCustomerRegistration()"
           />
         </p>
 
