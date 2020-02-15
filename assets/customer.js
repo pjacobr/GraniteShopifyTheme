@@ -79,5 +79,14 @@ function validateCustomerRegistration() {
     })
   })
     .then(r => r.json())
-    .then(data => console.log("data returned:", data));
+    .then(data => {
+      console.log("data returned:", data);
+      send_notification_mail({ first_name, last_name });
+      // $.ajax({
+      //   method: "POST",
+      //   url: "https://mygranite.app/send-mail"
+      // }).done(function(msg) {
+      //   console.log("Customer account create request has sent");
+      // });
+    });
 }
