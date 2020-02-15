@@ -1,201 +1,88 @@
 <div class="page-width">
-  <div class="grid">
-    <div class="grid__item medium-up--one-half medium-up--push-one-quarter">
-      <div class="form-vertical">
-        <h1 class="text-center">{{ "customer.register.title" | t }}</h1>
+    <div class="grid">
+        <div class="grid__item medium-up--one-half medium-up--push-one-quarter">
+            <div class="form-vertical">
+                <h1 class="text-center">{{ "customer.register.title" | t }}</h1>
 
-        {%- assign formId = 'create_customer' -%} {% form 'create_customer', id:
-        formId %} {% render 'form-status', form: form, form_id: formId %}
+                {%- assign formId = 'create_customer' -%}
+                {% form 'create_customer', id:
+        formId %}
+                    {% render 'form-status', form: form, form_id: formId %}
 
-        <label for="{{ formId }}-first_name">{{
+                    <label for="{{ formId }}-first_name">{{
           "customer.register.first_name" | t
         }}</label>
-        <input
-          type="text"
-          name="customer[first_name]"
-          id="{{ formId }}-first_name"
-          {%
-          if
-          form.first_name
-          %}value="{{ form.first_name }}"
-          {%
-          endif
-          %}
-          autocomplete="given-name"
-        />
+                    <input type="text" name="customer[first_name]" id="{{ formId }}-first_name" {% if form.first_name %} value="{{ form.first_name }}" {% endif %} autocomplete="given-name"/>
 
-        <label for="{{ formId }}-last_name">{{
+                    <label for="{{ formId }}-last_name">{{
           "customer.register.last_name" | t
         }}</label>
-        <input
-          type="text"
-          name="customer[last_name]"
-          id="{{ formId }}-last_name"
-          {%
-          if
-          form.last_name
-          %}value="{{ form.last_name }}"
-          {%
-          endif
-          %}
-          autocomplete="family-name"
-        />
+                    <input type="text" name="customer[last_name]" id="{{ formId }}-last_name" {% if form.last_name %} value="{{ form.last_name }}" {% endif %} autocomplete="family-name"/>
 
-        <label for="{{ formId }}-company_name">{{
+                    <label for="{{ formId }}-company_name">{{
           "customer.register.company_name" | t
         }}</label>
-        <input
-          type="text"
-          name="customer[note][company]"
-          id="{{ formId }}-company_name"
-          {%
-          if
-          form.company_name
-          %}value="{{ form.company_name }}"
-          {%
-          endif
-          %}
-          autocomplete="company-name"
-        />
+                    <input type="text" name="customer[note][company]" id="{{ formId }}-company_name" {% if form.company_name %} value="{{ form.company_name }}" {% endif %} autocomplete="company-name"/>
 
-        <label for="{{ formId }}-Address">{{
+                    <label for="{{ formId }}-Address">{{
           "customer.register.address" | t
         }}</label>
-        <label for="{{ formId }}-Street">{{
+                    <label for="{{ formId }}-Street">{{
           "customer.register.street" | t
         }}</label>
-        <input
-          type="text"
-          name="customer[note][street]"
-          id="{{ formId }}-street"
-          {%
-          if
-          form.street
-          %}value="{{ form.street }}"
-          {%
-          endif
-          %}
-          autocomplete="street"
-        />
+                    <input type="text" name="customer[note][street]" id="{{ formId }}-street" {% if form.street %} value="{{ form.street }}" {% endif %} autocomplete="street"/>
 
-        <label for="{{ formId }}-State">{{
+                    <label for="{{ formId }}-State">{{
           "customer.register.state" | t
         }}</label>
-        <input
-          type="text"
-          name="customer[note][state]"
-          id="{{ formId }}-state"
-          {%
-          if
-          form.state
-          %}value="{{ form.state }}"
-          {%
-          endif
-          %}
-          autocomplete="state"
-        />
+                    <input type="text" name="customer[note][state]" id="{{ formId }}-state" {% if form.state %} value="{{ form.state }}" {% endif %} autocomplete="state"/>
 
-        <label for="{{ formId }}-City">{{
+                    <label for="{{ formId }}-City">{{
           "customer.register.city" | t
         }}</label>
-        <input
-          type="text"
-          name="customer[note][city]"
-          id="{{ formId }}-city"
-          {%
-          if
-          form.city
-          %}value="{{ form.city }}"
-          {%
-          endif
-          %}
-          autocomplete="city"
-        />
+                    <input type="text" name="customer[note][city]" id="{{ formId }}-city" {% if form.city %} value="{{ form.city }}" {% endif %} autocomplete="city"/>
 
-        <label for="{{ formId }}-Zip">{{ "customer.register.zip" | t }}</label>
-        <input
-          type="text"
-          name="customer[note][zip]"
-          id="{{ formId }}-zip"
-          {%
-          if
-          form.street
-          %}value="{{ form.zip }}"
-          {%
-          endif
-          %}
-          autocomplete="zip"
-        />
+                    <label for="{{ formId }}-Zip">{{ "customer.register.zip" | t }}</label>
+                    <input type="text" name="customer[note][zip]" id="{{ formId }}-zip" {% if form.street %} value="{{ form.zip }}" {% endif %} autocomplete="zip"/>
 
-        <label for="{{ formId }}-Phone">{{
+                    <label for="{{ formId }}-Phone">{{
           "customer.register.phone" | t
         }}</label>
-        <input
-          type="text"
-          name="customer[note][phone]"
-          id="{{ formId }}-phone"
-          {%
-          if
-          form.street
-          %}value="{{ form.phone }}"
-          {%
-          endif
-          %}
-          autocomplete="tel"
-        />
+                    <input type="text" name="customer[note][phone]" id="{{ formId }}-phone" {% if form.street %} value="{{ form.phone }}" {% endif %} autocomplete="tel"/>
 
-        <label for="{{ formId }}-email">{{
+                    <label for="{{ formId }}-email">{{
           "customer.register.email" | t
         }}</label>
-        <input type="email" name="customer[email]" id="{{ formId }}-email"
-        class="{% if form.errors contains 'email' %} input--error{% endif %}" {%
-        if form.email %} value="{{ form.email }}"{% endif %} autocorrect="off"
-        autocapitalize="off" autocomplete="email" aria-required="true" {%- if
-        form.errors contains 'email' -%} class="input--error"
-        aria-invalid="true" aria-describedby="{{ formId }}-email-error" {%-
-        endif -%} > {%- if form.errors contains 'email' -%}
-        <span id="{{ formId }}-email-error" class="input-error-message">
-          <span class="visually-hidden"
-            >{{ "general.accessibility.error" | t }}
-          </span>
-          {% render 'icon-error' %}
-          <span
-            >{{ form.errors.translated_fields["email"] | capitalize }}
-            {{ form.errors.messages["email"] }}.</span
-          >
-        </span>
-        {%- endif -%}
+                    <input type="email" name="customer[email]" id="{{ formId }}-email" class="{% if form.errors contains 'email' %} input--error{% endif %}" {% if form.email %} value="{{ form.email }}" {% endif %} autocorrect="off" autocapitalize="off" autocomplete="email" aria-required="true" {%- if form.errors contains 'email' -%} class="input--error" aria-invalid="true" aria-describedby="{{ formId }}-email-error" {%- endif -%}>
+                    {%- if form.errors contains 'email' -%}
+                        <span id="{{ formId }}-email-error" class="input-error-message">
+                            <span class="visually-hidden">{{ "general.accessibility.error" | t }}
+                            </span>
+                            {% render 'icon-error' %}
+                            <span>{{ form.errors.translated_fields["email"] | capitalize }}
+                                {{ form.errors.messages["email"] }}.</span>
+                        </span>
+                    {%- endif -%}
 
-        <label for="{{ formId }}-password">{{
+                    <label for="{{ formId }}-password">{{
           "customer.register.password" | t
         }}</label>
-        <input type="password" name="customer[password]" id="{{
-          formId
-        }}-password" class="{% if form.errors contains 'password' %}
-        input--error{% endif %}" aria-required="true" {%- if form.errors
-        contains 'password' -%} class="input--error" aria-invalid="true"
-        aria-describedby="{{ formId }}-password-error" {%- endif -%} > {%- if
+                    <input type="password" name="customer[password]" id="{{ formId }}-password" class="{% if form.errors contains 'password' %} input--error{% endif %}" aria-required="true" {%- if form.errors contains 'password' -%} class="input--error" aria-invalid="true" aria-describedby="{{ formId }}-password-error" {%- endif -%}>
+                    {%- if
         form.errors contains 'password' -%}
-        <span id="{{ formId }}-password-error" class="input-error-message">
-          {% render 'icon-error' %}
-          <span
-            >{{ form.errors.translated_fields["password"] | capitalize }}
-            {{ form.errors.messages["password"] }}.</span
-          >
-        </span>
-        {%- endif -%}
-        <span id="customer-registration-error"></span>
-        <p class="text-center">
-          <input
-            type="button"
-            value="{{ 'customer.register.submit' | t }}"
-            class="btn"
-            onclick="validateCustomerRegistration()"
-          />
-        </p>
+                        <span id="{{ formId }}-password-error" class="input-error-message">
+                            {% render 'icon-error' %}
+                            <span>{{ form.errors.translated_fields["password"] | capitalize }}
+                                {{ form.errors.messages["password"] }}.</span>
+                        </span>
+                    {%- endif -%}
+                    <span id="customer-registration-info" style="display: block; padding: 10px;"></span>
+                    <p class="text-center">
+                        <input type="button" value="{{ 'customer.register.submit' | t }}" class="btn" onclick="validateCustomerRegistration()"/>
+                    </p>
 
-        {% endform %}
-      </div>
+                {% endform %}
+            </div>
+        </div>
     </div>
-  </div>
 </div>

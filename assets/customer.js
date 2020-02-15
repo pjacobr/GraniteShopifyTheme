@@ -31,7 +31,7 @@ function validateCustomerRegistration() {
   customer_ary["town_flag"] = true;
   customer_ary["created_at"] = dateTime;
 
-  $("#customer-registration-error").html("Validating....");
+  $("#customer-registration-info").html("Validating....");
   const {
     first_name,
     last_name,
@@ -81,6 +81,9 @@ function validateCustomerRegistration() {
     .then(r => r.json())
     .then(data => {
       console.log("data returned:", data);
+      $("#customer-registration-info").html(
+        "Thank you. Your request is now under review."
+      );
       send_notification_mail({ first_name, last_name });
       // $.ajax({
       //   method: "POST",
