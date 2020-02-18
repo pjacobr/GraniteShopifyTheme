@@ -82,9 +82,13 @@ function validateCustomerRegistration() {
     .then(data => {
       console.log("data returned:", data);
       $("#customer-registration-info").html(
-        "Thank you. Your request is now under review."
+        "Thank you. Your request is now under review. we will redirect you to Home page after a while..."
       );
       send_notification_mail({ first_name, last_name });
+
+      window.setTimeout(function() {
+        location.href = "https://georgiagranitegroup.com/";
+      }, 1000);
       // $.ajax({
       //   method: "POST",
       //   url: "https://mygranite.app/send-mail"
