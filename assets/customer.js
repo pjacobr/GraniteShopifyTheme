@@ -18,22 +18,29 @@ function validateCityOrPostalCode(value) {
 }
 
 function checkRequiredFields(customer_data) {
-  return Object.keys(customer_data).reduce((str, key, index) => {
+  return Object.keys(customer_data).reduce((eror_str, key, index) => {
+    var flag = false;
     const value = customer_data[key];
-    console.log("key", key, "value", value);
+    // console.log("key", key, "value", value);
     if (key === "zip") {
       if (!validateCityOrPostalCode(value)) {
         $("span.required")
           .eq(index)
           .show();
+
+        flag = true;
       }
     } else {
       if (value == "") {
         $("span.required")
           .eq(index)
           .show();
+
+        flag = true;
       }
     }
+
+    return flag ? eror_str + " " + key : eror_str;
   }, "");
 }
 
@@ -61,7 +68,8 @@ function validateCustomerRegistration() {
   });
 
   const err = checkRequiredFields(customer_data);
-  if (err) {
+  console.log("error", err);
+  if (err != "") {
     $("#customer-error-info").html(`Invalid fields (${err})`);
   } else {
     var today = new Date();
