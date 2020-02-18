@@ -1,37 +1,97 @@
-console.log("loading customer registration validation function");
+function phoneMask() {
+  var num = $(this)
+    .val()
+    .replace(/\D/g, "");
+  $(this).val(
+    num.substring(0, 1) +
+      "(" +
+      num.substring(1, 4) +
+      ")" +
+      num.substring(4, 7) +
+      "-" +
+      num.substring(7, 11)
+  );
+}
+
+function validateCityOrPostalCode(value) {
+  return /^([0-9]{5}|[a-zA-Z][a-zA-Z ]{0,49})$/.test(value);
+}
+
+function checkRequiredFields(customer_data) {
+  return Object.keys(customer_data).reduce((str, key, index) => {
+    const value = customer_data[key];
+    console.log("key", key, "value", value);
+    if (key === "zip") {
+      if (!validateCityOrPostalCode(value)) {
+        $("span.required")
+          .eq(index)
+          .show();
+      }
+    } else {
+      if (value == "") {
+        $("span.required")
+          .eq(index)
+          .show();
+      }
+    }
+  }, "");
+}
 
 function validateCustomerRegistration() {
-  console.log("capture form data");
-  var key_ary = [
+  const info = "Validating...";
+
+  const key_ary = [
     "first_name",
     "last_name",
     "company_name",
     "street",
     "state",
+    "city",
     "zip",
     "phone",
     "email",
     "password"
   ];
 
-  var customer_ary = {};
+  const customer_data = {};
 
   key_ary.forEach(key => {
-    const key_ex = `#create_customer-${key}`;
-    customer_ary[key] = $(key_ex).val();
+    const dom_id = `#create_customer-${key}`;
+    customer_data[key] = $(dom_id).val();
   });
 
-  var today = new Date();
-  var date =
-    today.getFullYear() + "-" + (today.getMonth() + 1) + "-" + today.getDate();
-  var time =
-    today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-  var dateTime = date + " " + time;
+  const err = checkRequiredFields(customer_data);
+  if (err) {
+    $("#customer-error-info").html(`Invalid fields (${err})`);
+  } else {
+    var today = new Date();
+    var date =
+      today.getFullYear() +
+      "-" +
+      (today.getMonth() + 1) +
+      "-" +
+      today.getDate();
+    var time =
+      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date + " " + time;
 
-  customer_ary["town_flag"] = true;
-  customer_ary["created_at"] = dateTime;
+    customer_data["town_flag"] = true;
+    customer_data["created_at"] = dateTime;
 
-  $("#customer-registration-info").html("Validating....");
+    $("#customer-registration-info").html(info);
+
+    requestCustomerRegistration(customer_data);
+  }
+}
+
+function clearInfo() {
+  $("#customer-error-info").html("");
+  $("#customer-registration-info").html("");
+}
+
+function requestCustomerRegistration(customer_data) {
+  const info = `Thank you. Your request is now under review. 
+                  we will redirect you to Home page after a while...`;
   const {
     first_name,
     last_name,
@@ -45,7 +105,7 @@ function validateCustomerRegistration() {
     password,
     town_flag,
     created_at
-  } = customer_ary;
+  } = customer_data;
 
   var mutation = `mutation { 
     setCustomer(
@@ -66,7 +126,6 @@ function validateCustomerRegistration() {
     }
   }`;
 
-  console.log("mutation", mutation);
   fetch("https://mygranite.app:443/graphql-mdb", {
     method: "POST",
     headers: {
@@ -75,25 +134,26 @@ function validateCustomerRegistration() {
     },
     body: JSON.stringify({
       query: mutation
-      // variables: customer_ary
+      // variables: customer_data
     })
   })
     .then(r => r.json())
     .then(data => {
-      console.log("data returned:", data);
-      $("#customer-registration-info").html(
-        "Thank you. Your request is now under review. we will redirect you to Home page after a while..."
-      );
+      $("#customer-registration-info").html(info);
       send_notification_mail({ first_name, last_name });
 
       window.setTimeout(function() {
         location.href = "https://georgiagranitegroup.com/";
       }, 1000);
-      // $.ajax({
-      //   method: "POST",
-      //   url: "https://mygranite.app/send-mail"
-      // }).done(function(msg) {
-      //   console.log("Customer account create request has sent");
-      // });
     });
 }
+
+$("#create_customer-phone").keyup(phoneMask);
+
+$("input").change(function() {
+  $(this)
+    .next(".required")
+    .hide();
+
+  clearInfo();
+});
