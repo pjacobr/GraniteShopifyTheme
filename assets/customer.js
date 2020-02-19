@@ -1,21 +1,85 @@
+const gqlShopifyStoreFrontUrl =
+  "https://cors-anywhere.herokuapp.com/https://georgiagranitegroup.myshopify.com/admin/api/2020-01/graphql.json";
+
+const GET_CUSTOMER = (email, phone) => `
+  query	{
+    customers(first: 2, query: "phone:${phone} OR email:${email}") {
+      edges {
+        node {
+          id
+          firstName
+          email
+          phone
+        }
+      }
+    }
+  }
+  `;
+
+const gqlShopifyStoreFrontOpts = body => {
+  let username = "c61e8eeb63289c54152c47567f06dfe7";
+  let password = "b0ced664c925a40eebd5b7ae9e96346b";
+  // let base64 = require("base-64");
+  let headers = {
+    "Content-Type": "application/json",
+    Origin: "mygranite.app"
+  };
+
+  headers.Authorization = "Basic " + btoa(username + ":" + password);
+
+  return {
+    method: "POST",
+    headers: headers,
+    body: JSON.stringify({
+      query: body
+    })
+  };
+};
+
+const getCustomer = customer_data => {
+  const { email, phone } = customer_data;
+  const updatedPhone = convertPhoneNumber(phone);
+
+  return fetch(
+    gqlShopifyStoreFrontUrl,
+    gqlShopifyStoreFrontOpts(GET_CUSTOMER(email, updatedPhone))
+  );
+};
+
+const convertPhoneNumber = phone => {
+  return phone.split("").reduce((total, ch) => {
+    if (["(", ")", "-"].find(e => ch == e) === undefined) {
+      return total + ch;
+    } else {
+      return total;
+    }
+  }, "");
+};
+
 function phoneMask() {
   var num = $(this)
     .val()
     .replace(/\D/g, "");
   $(this).val(
-    num.substring(0, 1) +
-      "(" +
-      num.substring(1, 4) +
+    "(" +
+      num.substring(0, 3) +
       ")" +
-      num.substring(4, 7) +
+      num.substring(3, 6) +
       "-" +
-      num.substring(7, 11)
+      num.substring(6, 10)
   );
 }
 
 function validateCityOrPostalCode(value) {
   return /^([0-9]{5}|[a-zA-Z][a-zA-Z ]{0,49})$/.test(value);
 }
+
+function validateEmail(email) {
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
+
+// function checkDuplicateInfo(customer_data) {}
 
 function checkRequiredFields(customer_data) {
   return Object.keys(customer_data).reduce((eror_str, key, index) => {
@@ -30,7 +94,29 @@ function checkRequiredFields(customer_data) {
 
         flag = true;
       }
+    } else if (key === "password") {
+      if (value.length < 5) {
+        $("span.required")
+          .eq(index)
+          .show();
+        flag = true;
+      }
+    } else if (key === "email") {
+      if (!validateEmail(value)) {
+        $("span.required")
+          .eq(index)
+          .show();
+        flag = true;
+      }
+    } else if (key === "phone") {
+      if (value == "" || value == "+1") {
+        $("span.required")
+          .eq(index)
+          .show();
+        flag = true;
+      }
     } else {
+      console.log("other field", key, value);
       if (value == "") {
         $("span.required")
           .eq(index)
@@ -45,8 +131,8 @@ function checkRequiredFields(customer_data) {
 }
 
 function validateCustomerRegistration() {
-  const info = "Validating...";
-
+  const info = " We are validating...";
+  $("#customer-registration-info").html(info);
   const key_ary = [
     "first_name",
     "last_name",
@@ -64,31 +150,69 @@ function validateCustomerRegistration() {
 
   key_ary.forEach(key => {
     const dom_id = `#create_customer-${key}`;
-    customer_data[key] = $(dom_id).val();
+    if (key === "phone") {
+      customer_data[key] = "+1" + $(dom_id).val();
+    } else {
+      customer_data[key] = $(dom_id).val();
+    }
   });
 
+  // primary validation
   const err = checkRequiredFields(customer_data);
+
   console.log("error", err);
+
   if (err != "") {
     $("#customer-error-info").html(`Invalid fields (${err})`);
   } else {
-    var today = new Date();
-    var date =
-      today.getFullYear() +
-      "-" +
-      (today.getMonth() + 1) +
-      "-" +
-      today.getDate();
-    var time =
-      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    var dateTime = date + " " + time;
+    // Dupllicate validation
+    getCustomer(customer_data)
+      .then(res => res.json())
 
-    customer_data["town_flag"] = true;
-    customer_data["created_at"] = dateTime;
+      .then(res => {
+        const { customers } = res.data;
+        const duplicate_flag = customers.edges.length;
+        console.log("duplicate_flag", duplicate_flag);
+        if (duplicate_flag) {
+          var duplicate_err_msg = "";
+          if (duplicate_flag == 1) {
+            duplicate_err_msg = "email or phone is duplicated";
+          } else {
+            duplicate_err_msg = "email and phone are duplicated";
+          }
+          $("#customer-error-info").html(duplicate_err_msg);
+        } else {
+          var today = new Date();
+          var date =
+            today.getFullYear() +
+            "-" +
+            (today.getMonth() + 1) +
+            "-" +
+            today.getDate();
+          var time =
+            today.getHours() +
+            ":" +
+            today.getMinutes() +
+            ":" +
+            today.getSeconds();
+          var dateTime = date + " " + time;
 
-    $("#customer-registration-info").html(info);
+          customer_data["town_flag"] = true;
+          customer_data["created_at"] = dateTime;
 
-    requestCustomerRegistration(customer_data);
+          requestCustomerRegistration(customer_data);
+        }
+      })
+      .catch(err => {
+        console.log(
+          "there is an error in fetching customer from shopify store",
+          err
+        );
+        $("#customer-error-info").html(
+          "There is an error in admin graphql api"
+        );
+        return true;
+      });
   }
 }
 
