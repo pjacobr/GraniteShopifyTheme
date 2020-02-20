@@ -1,6 +1,8 @@
 const gqlShopifyStoreFrontUrl =
   "https://cors-anywhere.herokuapp.com/https://georgiagranitegroup.myshopify.com/admin/api/2020-01/graphql.json";
 
+const gqlServerUrl = "https://mygranite.app/graphql-mdb";
+
 const GET_CUSTOMER = (email, phone) => `
   query	{
     customers(first: 2, query: "phone:${phone} OR email:${email}") {
@@ -15,6 +17,20 @@ const GET_CUSTOMER = (email, phone) => `
     }
   }
   `;
+
+const GET_PENDING_CUSTOMER = `
+  query { 
+    customers {
+      phone
+      email
+  }
+}`;
+
+const gqlServerOpts = {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ query: GET_PENDING_CUSTOMER })
+};
 
 const gqlShopifyStoreFrontOpts = body => {
   let username = "c61e8eeb63289c54152c47567f06dfe7";
@@ -166,54 +182,73 @@ function validateCustomerRegistration() {
   if (err != "") {
     $("#customer-error-info").html(`Invalid fields (${err})`);
   } else {
-    // Dupllicate validation
-    getCustomer(customer_data)
+    fetch(gqlServerUrl, gqlServerOpts)
       .then(res => res.json())
-
       .then(res => {
         const { customers } = res.data;
-        const duplicate_flag = customers.edges.length;
-        console.log("duplicate_flag", duplicate_flag);
-        if (duplicate_flag) {
-          var duplicate_err_msg = "";
-          if (duplicate_flag == 1) {
-            duplicate_err_msg = "email or phone is duplicated";
-          } else {
-            duplicate_err_msg = "email and phone are duplicated";
-          }
-          $("#customer-error-info").html(duplicate_err_msg);
+        // customers.push(0);
+        console.log("fetch cusotmers", customers);
+        const { email, phone } = customer_data;
+        const tempStoredDuplicate = customers.find(
+          item => item.email === email || item.phone === phone
+        );
+        console.log("tempStoredDuplicate", tempStoredDuplicate);
+        if (tempStoredDuplicate) {
+          $("#customer-error-info").html(
+            "You have already sent the request. Please wait for the admin approval."
+          );
         } else {
-          var today = new Date();
-          var date =
-            today.getFullYear() +
-            "-" +
-            (today.getMonth() + 1) +
-            "-" +
-            today.getDate();
-          var time =
-            today.getHours() +
-            ":" +
-            today.getMinutes() +
-            ":" +
-            today.getSeconds();
-          var dateTime = date + " " + time;
+          getCustomer(customer_data)
+            .then(res => res.json())
+            .then(res => {
+              const { customers } = res.data;
 
-          customer_data["town_flag"] = true;
-          customer_data["created_at"] = dateTime;
+              const duplicate_flag = customers.edges.length;
+              console.log("duplicate_flag", duplicate_flag);
+              if (duplicate_flag) {
+                var duplicate_err_msg = "";
+                if (duplicate_flag == 1) {
+                  duplicate_err_msg = "email or phone is duplicated";
+                } else {
+                  duplicate_err_msg = "email and phone are duplicated";
+                }
+                $("#customer-error-info").html(duplicate_err_msg);
+              } else {
+                var today = new Date();
+                var date =
+                  today.getFullYear() +
+                  "-" +
+                  (today.getMonth() + 1) +
+                  "-" +
+                  today.getDate();
+                var time =
+                  today.getHours() +
+                  ":" +
+                  today.getMinutes() +
+                  ":" +
+                  today.getSeconds();
+                var dateTime = date + " " + time;
 
-          requestCustomerRegistration(customer_data);
+                customer_data["town_flag"] = true;
+                customer_data["created_at"] = dateTime;
+
+                requestCustomerRegistration(customer_data);
+              }
+            })
+            .catch(err => {
+              console.log(
+                "there is an error in fetching customer from shopify store",
+                err
+              );
+              $("#customer-error-info").html(
+                "There is an error in admin graphql api"
+              );
+              return true;
+            });
         }
       })
-      .catch(err => {
-        console.log(
-          "there is an error in fetching customer from shopify store",
-          err
-        );
-        $("#customer-error-info").html(
-          "There is an error in admin graphql api"
-        );
-        return true;
-      });
+      .catch(console.error);
+    // Dupllicate validation
   }
 }
 
@@ -275,9 +310,9 @@ function requestCustomerRegistration(customer_data) {
       $("#customer-registration-info").html(info);
       send_notification_mail({ first_name, last_name });
 
-      // window.setTimeout(function() {
-      //   location.href = "https://georgiagranitegroup.com/";
-      // }, 1000);
+      window.setTimeout(function() {
+        location.href = "https://georgiagranitegroup.com/";
+      }, 1000);
     });
 }
 
