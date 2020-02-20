@@ -13,7 +13,15 @@ $(document).ready(function() {
   const colors = ["Jet Black", "Silver Cloud"];
   const color_keys = ["jet_black", "silver_cloud"];
 
-  init();
+  const lastUrl = getLastSegment();
+  switch (lastUrl) {
+    case "all":
+      init();
+      break;
+    case "cart":
+      initCart();
+      break;
+  }
 
   $(".product_color").change(function() {
     const selected_color = $(this).val();
@@ -38,6 +46,15 @@ $(document).ready(function() {
     changeProductId(index, td_product_ids, td_result);
   });
 
+  $(".cart__qty-input").change(function() {
+    initCart();
+  });
+
+  function getLastSegment() {
+    var pageURL = window.location.href;
+    var lastURLSegment = pageURL.substr(pageURL.lastIndexOf("/") + 1);
+    return lastURLSegment;
+  }
   function changePrice(color, td_prices) {
     td_prices.each((i, e) => {
       $(e).hide();
@@ -84,44 +101,6 @@ $(document).ready(function() {
       var amount = parseFloat(digits.join(""));
       return amount;
     }
-  }
-  async function init() {
-    const temp = await getDiscounts();
-
-    Object.keys(temp).forEach(key => {
-      localStorage.setItem(key, temp[key]);
-    });
-
-    const trs = $(".product_color")
-      .parent()
-      .parent();
-
-    trs.each((i, e) => {
-      const selected_color = $(e)
-        .find(".product_color")
-        .val();
-      const index = colors.indexOf(selected_color);
-      const td_result = $(e).find(".selected_product");
-      const td_prices = $(e).find(".product_price span");
-      const td_product_ids = $(e)
-        .find(".product_ids")
-        .text()
-        .split(",");
-
-      if (
-        $(e)
-          .find(".product_tag")
-          .text() == "discount"
-      ) {
-        applyDiscount(td_prices);
-      }
-      const init_color = "Jet Black";
-
-      changePrice(selected_color, td_prices);
-      changeProductId(index, td_product_ids, td_result);
-
-      $(".product_color").val(init_color);
-    });
   }
 
   async function getDiscounts() {
@@ -171,5 +150,77 @@ $(document).ready(function() {
     const response = await Fetch_GraphQL(fields);
     console.log("get colorpriceset", response);
     return response.data.colorPriceSets[0];
+  }
+
+  async function initAll() {
+    const temp = await getDiscounts();
+
+    Object.keys(temp).forEach(key => {
+      localStorage.setItem(key, temp[key]);
+    });
+
+    const trs = $(".product_color")
+      .parent()
+      .parent();
+
+    trs.each((i, e) => {
+      const selected_color = $(e)
+        .find(".product_color")
+        .val();
+      const index = colors.indexOf(selected_color);
+      const td_result = $(e).find(".selected_product");
+      const td_prices = $(e).find(".product_price span");
+      const td_product_ids = $(e)
+        .find(".product_ids")
+        .text()
+        .split(",");
+
+      if (
+        $(e)
+          .find(".product_tag")
+          .text() == "discount"
+      ) {
+        applyDiscount(td_prices);
+      }
+      const init_color = "Jet Black";
+
+      changePrice(selected_color, td_prices);
+      changeProductId(index, td_product_ids, td_result);
+
+      $(".product_color").val(init_color);
+    });
+  }
+
+  async function initCart() {
+    const temp = await getDiscounts();
+
+    Object.keys(temp).forEach(key => {
+      localStorage.setItem(key, temp[key]);
+    });
+
+    const trs = $(".product_color")
+      .parent()
+      .parent();
+
+    trs.each((i, e) => {
+      const selected_color = $(e)
+        .find(".product_color")
+        .text();
+
+      const td_prices = $(e).find(".product_price");
+      const td_total_prices = $(e).find(".data-cart-item-regular-price");
+
+      if (
+        $(e)
+          .find(".product_tag")
+          .text() == "discount"
+      ) {
+        applyDiscount(td_prices);
+      }
+      const init_color = "Jet Black";
+
+      changePrice(selected_color, td_prices);
+      changePrice(selected_color, td_total_prices);
+    });
   }
 });
