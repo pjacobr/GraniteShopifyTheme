@@ -131,6 +131,7 @@ function checkRequiredFields(customer_data) {
 }
 
 function validateCustomerRegistration() {
+  clearInfo();
   const info = " We are validating...";
   $("#customer-registration-info").html(info);
   const key_ary = [
@@ -217,7 +218,7 @@ function validateCustomerRegistration() {
 }
 
 function clearInfo() {
-  $("#customer-error-info").html("");
+  $("#customer-error-info").text("");
   $("#customer-registration-info").html("");
 }
 
@@ -274,9 +275,9 @@ function requestCustomerRegistration(customer_data) {
       $("#customer-registration-info").html(info);
       send_notification_mail({ first_name, last_name });
 
-      window.setTimeout(function() {
-        location.href = "https://georgiagranitegroup.com/";
-      }, 1000);
+      // window.setTimeout(function() {
+      //   location.href = "https://georgiagranitegroup.com/";
+      // }, 1000);
     });
 }
 
