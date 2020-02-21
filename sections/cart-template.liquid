@@ -33,6 +33,11 @@
                     <div class="list-view-item__title">
                       <a href="{{ item.url }}" class="cart__product-title" data-cart-item-title>
                         {{ item.product.title }}
+                        {% if customer.tags contains 'intown' and item.product.metafields.global["Color"] == 'Jet Black' %}
+                          <input type="hidden" value="intown_jet_code" name="discount">
+                        {% elsif customer.tags contains 'intown' and item.product.metafields.global["Color"] == 'Silver Cloud' %}
+                          <input type="hidden" value="intown_silver_code" name="discount">
+                        {% endif %}
                       </a>
                     </div>
 

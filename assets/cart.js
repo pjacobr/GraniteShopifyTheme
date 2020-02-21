@@ -47,6 +47,7 @@ $(document).ready(function() {
   });
 
   $(".cart__qty-input").change(function() {
+    console.log("change quantity");
     initCart();
   });
 

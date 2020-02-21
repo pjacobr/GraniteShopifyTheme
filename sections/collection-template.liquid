@@ -140,15 +140,13 @@
       </div> -->
   </header>
   <!-- inventory view  -->
-  {% if customer %}
+  <!-- {% if customer %}
     Customer is logged in. You can access the customer
     attributes such as {{ customer.first_name }} {{ customer.last_name}} who lives in 
     {% for address in customer.addresses %}
       {{ address.country }}  {{ address.city }}
     {% endfor %} .
-
-    <span class="customer_tag" hidden>{{ customer.tags.first }}</span>
-  {% endif %}
+  {% endif %} -->
   <div class="page-width" id="Collection">
     {% assign fieldNames = "Color, Type, Size, Description, Photo, Price, In Inv, Weight, Add to Cart" | split: ',' %}
    
@@ -159,55 +157,38 @@
             <th>{{ fieldName }}</th>
           {% endfor %}
         </tr>
-        <!-- {% assign customer_town_flag = customer.metafields.global | first %}
-        <pre>Customer Town:  {{customer_town_flag}} ======================</pre> -->
+        <!-- {% assign customer_town_flag = customer.metafields.global | first %} -->
+        <!-- <pre>Customer Town:  {{customer_town_flag}} ======================</pre> -->
        
         {% for product in collection.products %}
-        
-          <!-- {% assign product_town = product.options_with_values | first %}
-          <pre>Product Town:  {{product_town}} ======================</pre> -->
+          
+          <!-- {% assign product_town = product.options_with_values | first %} -->
+          <!-- <pre>Product Town:  {{product_town}} ======================</pre> -->
          
           
               {% assign product_fields = product.description | split: '<br>' %}
               {% capture productSize %}{{product.metafields.global["Length"]}}x{{product.metafields.global["Width"]}}x{{product.metafields.global["Height"]}}{% endcapture %}
-
+              
               <tr>
-                <td>
-                  <span class="product_tag" hidden>{{ product.tags.first }}</span>
-                  {{ product.title}}
-                </td>
-                <td>
-                  <select class="product_color">
-                  {% for variant in product.variants %}
-                    <option>{{ variant.options.first }}</option>
-                  {% endfor %}
-                  </select>
-                </td>
-                
+                <td>{{ product.metafields.global["Color"] }}</td>
+                <td>{{ product.metafields.global["Product Type"] }}</td>
                 <td>{{ productSize }}</td>
                 <td>{{ product.description }}</td>
                 <td>{{ product.featured_image | img_url: '100x100' | img_tag }}</td>
-                <td class="product_price">
-
-                  {% for variant in product.variants %}
-                    <span color="{{variant.options.first}}">{{ variant.price | times: 1 | money }}</span>
-                  {% endfor %}
-                </td>
+                <td>{{ product.price | money}}</td>
                 <td>{{ product.first_available_variant.inventory_quantity }}</td>
                 <td>{{ product.first_available_variant.weight | weight_with_unit: variant.weight_unit }}</td>
               
                 <td style="width: 100px">
-                  <span class="product_ids" style="display: none; visibility: hidden;">{{ product.variants | map: 'id' | join: "," }}</span>
-                  <form action="/cart/add" method="post" id="product-form">
-                    
-                    <input type="hidden" class="selected_product" name="id" value="{{ product.variants.first.id }}">
-                    
+                <form action="/cart/add" method="post" id="product-form- {{ product.id }}">
+                  <input type="hidden" name="id" value="{{ product.variants.first.id }}">
                     <div>
                       <button type="submit" name="add" class="btn-addtocart">Add to cart</button>
                     </div>
-                  </form>
-                </td>
+                </form>
+              </td>
             </tr>
+          
         {% endfor %}
         </tr>
       </table>
