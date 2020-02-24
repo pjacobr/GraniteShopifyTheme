@@ -15,7 +15,7 @@
   {%- assign limit = 16 -%}
 {% endif %}
 
-{% paginate collection.products by limit %}
+
 
 <div data-section-id="{{ section.id }}" data-section-type="collection-template">
 
@@ -148,9 +148,10 @@
     {% endfor %} .
   {% endif %} -->
   <div class="page-width" id="Collection">
-    {% assign fieldNames = "Color, Type, Size, Description, Photo, Price, In Inv, Weight, Add to Cart" | split: ',' %}
+    {% assign fieldNames = "Color, Type, Size, Finish, Ends Finish, Top Finish, Photo, Price, In Inv, Weight, Add to Cart" | split: ',' %}
    
     <div class="header" style="overflow-x:auto;">
+      {% paginate collection.products by limit %}
       <table cellspacing="0">
         <tr>
           {% for fieldName in fieldNames %}
@@ -173,7 +174,9 @@
                 <td>{{ product.metafields.global["Color"] }}</td>
                 <td>{{ product.metafields.global["Product Type"] }}</td>
                 <td>{{ productSize }}</td>
-                <td>{{ product.description }}</td>
+                <td>{{ product.metafields.global["Finish"] }}</td>
+                <td>{{ product.metafields.global["Ends Finish"] }}</td>
+                <td>{{ product.metafields.global["Top Finish"] }}</td>
                 <td>{{ product.featured_image | img_url: '100x100' | img_tag }}</td>
                 <td>{{ product.price | money}}</td>
                 <td>{{ product.first_available_variant.inventory_quantity }}</td>
@@ -192,11 +195,23 @@
         {% endfor %}
         </tr>
       </table>
+      <div style="width: 100%; display: flex; justify-content: center;">
+        {% if paginate.previous.is_link %}
+          <a style="margin: 0px 6px;" href="{{ paginate.previous.url }}">{{ paginate.previous.title }}</a>
+        {% endif %}
+        <label style="margin: 0px 6px;">{{ paginate.current_page }}</label>
+        {% if paginate.next.is_link %}
+            <a style="margin: 0px 6px;" href="{{ paginate.next.url }}">{{ paginate.next.title }}</a>
+        {% endif %}
+
+      </div>
+      
+      {% endpaginate %}
     </div>
   </div>
 </div>
 
-{% endpaginate %}
+
 
 
 
